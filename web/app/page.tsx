@@ -18,7 +18,7 @@ export default async function HomePage() {
         {motions.map((m) => (
           <li key={m.id}>
             <a href={`/motions/${m.id}`}>
-              {m.meeting_date} – {m.title} ({m.category} | {m.area})
+              {new Date(m.meeting_date).toLocaleDateString()} – {m.title} ({m.category} | {m.area})
             </a>
           </li>
         ))}
