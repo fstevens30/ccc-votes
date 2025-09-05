@@ -2,6 +2,12 @@
 
 A site to show how votes were casted by Christchurch City Councillors.
 
+## Progress
+- [x] Create layout
+- [x] Implement Neon DB
+- [ ] Build Python scripts
+- [ ] Optimise data fetching
+
 ## About
 
 In light of a somewhat questionable site being created in order to show how councillors have voted, this site has been created to show a more balanced and less biased view into voting records. All records are sourced directly from the Christchurch City Council meeting agendas, the project is also open-source in order to show transparency into how the data is gathered. 
