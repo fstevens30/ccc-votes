@@ -1,4 +1,13 @@
 import { prisma } from '@/lib/prisma'
+import { Badge } from '@/components/ui/badge'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow
+} from '@/components/ui/table'
 
 export default async function MotionPage ({
   params
@@ -26,33 +35,37 @@ export default async function MotionPage ({
   }
 
   return (
-    <main>
-      <h2>{motion.title}</h2>
+    <main className='space-y-6 p-4'>
+      <h2 className='text-2xl font-semibold'>{motion.title}</h2>
       <p>{motion.description}</p>
-      <p>
-        Category: {motion.category?.name || 'N/A'} | Area:{' '}
-        {motion.area?.name || 'N/A'}
+      <p className='flex space-x-2'>
+        <Badge variant='secondary'>
+          Category: {motion.category?.name || 'N/A'}
+        </Badge>
+        <Badge variant='secondary'>Area: {motion.area?.name || 'N/A'}</Badge>
       </p>
 
-      <h3>Votes</h3>
-      <table>
-        <thead>
-          <tr>
-            <th>Councillor</th>
-            <th>Party</th>
-            <th>Vote</th>
-          </tr>
-        </thead>
-        <tbody>
-          {motion.votes.map((v, i) => (
-            <tr key={i}>
-              <td>{v.councillor.name}</td>
-              <td>{v.councillor.party?.name || 'N/A'}</td>
-              <td>{v.vote}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <h3 className='text-xl font-semibold'>Votes</h3>
+      <div className='overflow-auto rounded-md border'>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Councillor</TableHead>
+              <TableHead>Party</TableHead>
+              <TableHead>Vote</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {motion.votes.map((v, i) => (
+              <TableRow key={i} className='hover:bg-muted'>
+                <TableCell>{v.councillor.name}</TableCell>
+                <TableCell>{v.councillor.party?.name || 'N/A'}</TableCell>
+                <TableCell>{v.vote}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
     </main>
   )
 }
