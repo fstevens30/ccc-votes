@@ -13,7 +13,8 @@ export default async function HomePage() {
 
   return (
     <main>
-      <h1>Christchurch City Council Votes</h1>
+      <h1>How they <i>really</i> voted.</h1>
+      <p>In light of a somewhat questionable site being created in order to show how councillors have voted, this site has been created to show a more balanced and less biased view into voting records. All records are sourced directly from the Christchurch City Council meeting agendas, the project is also open-source in order to show transparency into how the data is gathered. </p>
       <ul>
         {motions.map((m) => (
           <li key={m.id}>
