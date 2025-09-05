@@ -1,13 +1,7 @@
 import { PrismaClient } from '@prisma/client'
 import 'dotenv/config'
 
-const prisma = new PrismaClient({
-  datasources: {
-    db: {
-      url: process.env.DIRECT_URL
-    }
-  }
-})
+const prisma = new PrismaClient()
 
 async function main () {
   console.log('Seed script started!')
