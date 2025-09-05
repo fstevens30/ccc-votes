@@ -1,4 +1,5 @@
 import { pool } from "@/lib/dbClient";
+export const dynamic = 'force-dynamic';
 
 export default async function HomePage() {
   const res = await pool.query(`
