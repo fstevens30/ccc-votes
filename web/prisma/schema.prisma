@@ -1,0 +1,62 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Area {
+  id          Int          @id @default(autoincrement())
+  name        String
+  type        String
+  parentId    Int?
+  parent      Area?        @relation("AreaHierarchy", fields: [parentId], references: [id])
+  children    Area[]       @relation("AreaHierarchy")
+  motions     Motion[]
+  councillors Councillor[]
+}
+
+model Category {
+  id      Int      @id @default(autoincrement())
+  name    String   @unique
+  motions Motion[]
+}
+
+model Party {
+  id          Int          @id @default(autoincrement())
+  name        String       @unique
+  councillors Councillor[]
+}
+
+model Councillor {
+  id      Int    @id @default(autoincrement())
+  name    String @unique
+  wardId  Int?
+  partyId Int?
+  ward    Area?  @relation(fields: [wardId], references: [id])
+  party   Party? @relation(fields: [partyId], references: [id])
+  votes   Vote[]
+}
+
+model Motion {
+  id          Int       @id @default(autoincrement())
+  meetingDate DateTime
+  title       String
+  description String?
+  categoryId  Int?
+  areaId      Int?
+  category    Category? @relation(fields: [categoryId], references: [id])
+  area        Area?     @relation(fields: [areaId], references: [id])
+  votes       Vote[]
+}
+
+model Vote {
+  id           Int        @id @default(autoincrement())
+  vote         String
+  councillorId Int
+  motionId     Int
+  councillor   Councillor @relation(fields: [councillorId], references: [id])
+  motion       Motion     @relation(fields: [motionId], references: [id])
+}

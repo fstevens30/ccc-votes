@@ -1,18 +1,28 @@
-import { pool } from "@/lib/dbClient";
+import { prisma } from '@/lib/prisma'
 
-export default async function CategoryPage({ params }: { params: { id: string } }) {
-  const { id } = params;
+export default async function CategoryPage ({
+  params
+}: {
+  params: { id: string }
+}) {
+  const { id } = params
 
-  const categoryRes = await pool.query(`SELECT name FROM categories WHERE id = $1`, [id]);
-  const category = categoryRes.rows[0];
+  // Fetch the category
+  const category = await prisma.category.findUnique({
+    where: { id: Number(id) },
+    select: { name: true }
+  })
 
-  const motionsRes = await pool.query(`
-    SELECT id, title, meeting_date
-    FROM motions
-    WHERE category_id = $1
-    ORDER BY meeting_date DESC
-  `, [id]);
-  const motions = motionsRes.rows;
+  if (!category) {
+    return <p>Category not found</p>
+  }
+
+  // Fetch motions for this category
+  const motions = await prisma.motion.findMany({
+    where: { categoryId: Number(id) },
+    orderBy: { meetingDate: 'desc' },
+    select: { id: true, title: true, meetingDate: true }
+  })
 
   return (
     <main>
@@ -20,10 +30,12 @@ export default async function CategoryPage({ params }: { params: { id: string } 
       <ul>
         {motions.map(m => (
           <li key={m.id}>
-            <a href={`/motions/${m.id}`}>{m.meeting_date} – {m.title}</a>
+            <a href={`/motions/${m.id}`}>
+              {m.meetingDate.toISOString().split('T')[0]} – {m.title}
+            </a>
           </li>
         ))}
       </ul>
     </main>
-  );
+  )
 }

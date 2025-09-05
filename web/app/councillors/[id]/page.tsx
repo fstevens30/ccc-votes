@@ -1,51 +1,95 @@
-import { pool } from "@/lib/dbClient";
+import { prisma } from '@/lib/prisma'
+import { Badge } from '@/components/ui/badge'
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow
+} from '@/components/ui/table'
 
-export default async function CouncillorPage({ params }: { params: { id: string } }) {
-  const { id } = params;
+interface PageProps {
+  params: { id: string }
+}
 
-  const councillorRes = await pool.query(`
-    SELECT co.id, co.name, p.name AS party, a.name AS ward
-    FROM councillors co
-    LEFT JOIN parties p ON co.party_id = p.id
-    LEFT JOIN areas a ON co.ward_id = a.id
-    WHERE co.id = $1
-  `, [id]);
-  const councillor = councillorRes.rows[0];
+export default async function CouncillorPage ({ params }: PageProps) {
+  const id = Number(params.id)
 
-  const votesRes = await pool.query(`
-    SELECT v.vote, m.id AS motion_id, m.title, c.name AS category, a.name AS area
-    FROM votes v
-    LEFT JOIN motions m ON v.motion_id = m.id
-    LEFT JOIN categories c ON m.category_id = c.id
-    LEFT JOIN areas a ON m.area_id = a.id
-    WHERE v.councillor_id = $1
-    ORDER BY m.meeting_date DESC
-  `, [id]);
-  const votes = votesRes.rows;
+  // Fetch councillor with party, ward, and votes (including motions)
+  const councillor = await prisma.councillor.findUnique({
+    where: { id },
+    include: {
+      party: true,
+      ward: true,
+      votes: {
+        include: { motion: true },
+        orderBy: { motion: { meetingDate: 'desc' } }
+      }
+    }
+  })
+
+  if (!councillor) {
+    return (
+      <main className='p-6'>
+        <h1 className='text-2xl font-bold'>Councillor not found</h1>
+      </main>
+    )
+  }
 
   return (
-    <main>
-      <h2>{councillor.name}</h2>
-      <p>Party: {councillor.party || "Independent"}</p>
-      <p>Ward: {councillor.ward}</p>
+    <main className='p-6'>
+      <h1 className='text-3xl font-bold mb-2'>{councillor.name}</h1>
+      <div className='mb-2'>
+        {councillor.party ? (
+          <Badge>{councillor.party.name}</Badge>
+        ) : (
+          <Badge variant='outline'>Independent</Badge>
+        )}
+      </div>
+      <p className='mb-6 text-gray-600'>
+        {councillor.ward ? councillor.ward.name : 'City-wide'}
+      </p>
 
-      <h3>Votes</h3>
-      <table>
-        <thead>
-          <tr><th>Date</th><th>Motion</th><th>Category</th><th>Area</th><th>Vote</th></tr>
-        </thead>
-        <tbody>
-          {votes.map((v, i) => (
-            <tr key={i}>
-              <td>{v.motion_id}</td>
-              <td><a href={`/motions/${v.motion_id}`}>{v.title}</a></td>
-              <td>{v.category}</td>
-              <td>{v.area}</td>
-              <td>{v.vote}</td>
-            </tr>
+      <h2 className='text-2xl font-semibold mb-4'>Voting History</h2>
+      <Table>
+        <TableCaption>
+          A list of how {councillor.name} has voted on motions.
+        </TableCaption>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Date</TableHead>
+            <TableHead>Motion</TableHead>
+            <TableHead>Vote</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {councillor.votes.map(v => (
+            <TableRow key={v.id}>
+              <TableCell>
+                {v.motion?.meetingDate
+                  ? new Date(v.motion.meetingDate).toLocaleDateString()
+                  : 'N/A'}
+              </TableCell>
+              <TableCell>{v.motion?.title ?? 'N/A'}</TableCell>
+              <TableCell>
+                <Badge
+                  variant={
+                    v.vote === 'Yes'
+                      ? 'default'
+                      : v.vote === 'No'
+                      ? 'destructive'
+                      : 'outline'
+                  }
+                >
+                  {v.vote}
+                </Badge>
+              </TableCell>
+            </TableRow>
           ))}
-        </tbody>
-      </table>
+        </TableBody>
+      </Table>
     </main>
-  );
+  )
 }
