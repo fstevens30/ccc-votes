@@ -2,7 +2,8 @@
 
 A site to show how votes were casted by Christchurch City Councillors.
 
-## Progress
+## Status / Progress
+Currently the front-end and database side is setup. It's pretty slow so I'll fix that asap. The data fetching is being worked on.
 - [x] Create layout
 - [x] Implement Neon DB
 - [ ] Build Python scripts
@@ -20,12 +21,18 @@ The reason for this being created is because,
 There is no doubt that I disagree with the original version and it's creator, however the idea is sound and can be a genuinely useful tool wth the correct setup.
 
 All data is directly pulled from the Council site using Python scripts, found in `/scraper`.
+The Next.js project is found in the `/web` directory.
 
 ## Contributing
 
-Feel free to make contributions and changes to help keep this project accurate. Feel free to message me directly for any ideas or thoughts.
+Feel free to make contributions and changes to help keep this project accurate, message me directly for any ideas or thoughts.
+You will need to create a [Neon](https://neon.com/) database to run locally. It's simple, create a project and copy the `postgresql` connection string and add to `/web/.env` as shown below.
+```.env
+DATABASE_URL="postgresql://neondb_owner:<PASSWORD>@<DATABASE_URL>"
+```
+Then follow the [Prisma](https://prisma.io) docs to setup and seed the data in `seed.ts`.
 
 ## Future
 
-Hopefully this site is no longer needed in the next few years, there is talks of an official CCC voting record tool being created internally. Similar to the Wellington City Council one. 
+Hopefully this site is no longer needed in the near future, there is talks of an official CCC voting record tool being created internally. Similar to the Wellington City Council one. 
 
