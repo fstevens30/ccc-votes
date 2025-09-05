@@ -10,7 +10,7 @@ import { cn } from '@/lib/utils'
 export async function Nav () {
   return (
     <nav className='p-4 border-b border-gray-200'>
-      <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2'>
+      <div className='flex flex-col justify-center sm:flex-row sm:items-center sm:justify-between gap-2'>
         {/* Title */}
         <h1 className='text-2xl font-bold'>
           How they <i>really</i> voted
@@ -18,7 +18,7 @@ export async function Nav () {
 
         {/* Navigation buttons */}
         <NavigationMenu>
-          <NavigationMenuList className='flex flex-col sm:flex-row sm:space-x-4 gap-2'>
+          <NavigationMenuList className='flex gap-2'>
             <NavigationMenuItem>
               <Link
                 href='/'

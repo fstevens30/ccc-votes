@@ -9,7 +9,7 @@ datasource db {
 
 model Area {
   id          Int          @id @default(autoincrement())
-  name        String
+  name        String       @unique
   type        String
   parentId    Int?
   parent      Area?        @relation("AreaHierarchy", fields: [parentId], references: [id])
@@ -33,22 +33,22 @@ model Party {
 model Councillor {
   id      Int    @id @default(autoincrement())
   name    String @unique
-  wardId  Int?
-  partyId Int?
-  ward    Area?  @relation(fields: [wardId], references: [id])
-  party   Party? @relation(fields: [partyId], references: [id])
+  wardId  Int
+  partyId Int
+  ward    Area   @relation(fields: [wardId], references: [id])
+  party   Party  @relation(fields: [partyId], references: [id])
   votes   Vote[]
 }
 
 model Motion {
-  id          Int       @id @default(autoincrement())
+  id          Int      @id @default(autoincrement())
   meetingDate DateTime
   title       String
   description String?
-  categoryId  Int?
-  areaId      Int?
-  category    Category? @relation(fields: [categoryId], references: [id])
-  area        Area?     @relation(fields: [areaId], references: [id])
+  categoryId  Int
+  areaId      Int
+  category    Category @relation(fields: [categoryId], references: [id])
+  area        Area     @relation(fields: [areaId], references: [id])
   votes       Vote[]
 }
 
