@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { pool } from "@/lib/dbClient";
 
 export default async function CouncillorsPage() {
@@ -8,9 +10,7 @@ export default async function CouncillorsPage() {
     <main>
       <h1>Councillors</h1>
       <ul>
-        {councillors.map(c => (
-          <li key={c.id}>{c.name}</li>
-        ))}
+        {councillors.map(c => <li key={c.id}>{c.name}</li>)}
       </ul>
     </main>
   );
