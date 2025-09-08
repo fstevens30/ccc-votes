@@ -1,13 +1,5 @@
 import { prisma } from '@/lib/prisma'
-import { Badge } from '@/components/ui/badge'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow
-} from '@/components/ui/table'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 
 export default async function MotionPage ({
   params
@@ -16,7 +8,6 @@ export default async function MotionPage ({
 }) {
   const { id } = params
 
-  // Fetch the motion along with its category, area, and votes
   const motion = await prisma.motion.findUnique({
     where: { id: Number(id) },
     include: {
@@ -34,37 +25,69 @@ export default async function MotionPage ({
     return <p>Motion not found</p>
   }
 
+  // Separate votes into Yes and No groups
+  const yesVotes = motion.votes.filter(v => v.vote.toLowerCase() === 'yes')
+  const noVotes = motion.votes.filter(v => v.vote.toLowerCase() === 'no')
+
   return (
-    <main className='space-y-6 p-4'>
-      <h2 className='text-2xl font-semibold'>{motion.title}</h2>
+    <main className='p-6 space-y-6 mb-4'>
+      <h2 className='text-2xl font-bold'>{motion.title}</h2>
       <p>{motion.description}</p>
-      <p className='flex space-x-2'>
-        <Badge variant='secondary'>
-          Category: {motion.category?.name || 'N/A'}
-        </Badge>
-        <Badge variant='secondary'>Area: {motion.area?.name || 'N/A'}</Badge>
+      <p className='text-sm text-gray-600'>
+        Category: {motion.category?.name || 'N/A'} | Area:{' '}
+        {motion.area?.name || 'N/A'}
       </p>
 
-      <h3 className='text-xl font-semibold'>Votes</h3>
-      <div className='overflow-auto rounded-md border'>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Councillor</TableHead>
-              <TableHead>Party</TableHead>
-              <TableHead>Vote</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {motion.votes.map((v, i) => (
-              <TableRow key={i} className='hover:bg-muted'>
-                <TableCell>{v.councillor.name}</TableCell>
-                <TableCell>{v.councillor.party?.name || 'N/A'}</TableCell>
-                <TableCell>{v.vote}</TableCell>
-              </TableRow>
+      <h3 className='text-xl font-semibold mt-6'>Votes</h3>
+
+      <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
+        {/* Yes voters */}
+        <div>
+          <h4 className='text-green-600 font-semibold mb-3'>Yes</h4>
+          <div className='space-y-3'>
+            {yesVotes.map(v => (
+              <div key={v.id} className='flex items-center space-x-3'>
+                <Avatar>
+                  <AvatarImage
+                    src={`/councillors/${v.councillor.id}.jpg`}
+                    alt={v.councillor.name}
+                  />
+                  <AvatarFallback>{v.councillor.name[0]}</AvatarFallback>
+                </Avatar>
+                <div>
+                  <p className='font-medium'>{v.councillor.name}</p>
+                  <p className='text-sm text-gray-500'>
+                    {v.councillor.party?.name || 'Independent'}
+                  </p>
+                </div>
+              </div>
             ))}
-          </TableBody>
-        </Table>
+          </div>
+        </div>
+
+        {/* No voters */}
+        <div>
+          <h4 className='text-red-600 font-semibold mb-3'>No</h4>
+          <div className='space-y-3'>
+            {noVotes.map(v => (
+              <div key={v.id} className='flex items-center space-x-3'>
+                <Avatar>
+                  <AvatarImage
+                    src={`/councillors/${v.councillor.id}.jpg`}
+                    alt={v.councillor.name}
+                  />
+                  <AvatarFallback>{v.councillor.name[0]}</AvatarFallback>
+                </Avatar>
+                <div>
+                  <p className='font-medium'>{v.councillor.name}</p>
+                  <p className='text-sm text-gray-500'>
+                    {v.councillor.party?.name || 'Independent'}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </main>
   )

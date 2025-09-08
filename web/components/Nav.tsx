@@ -10,7 +10,7 @@ import { cn } from '@/lib/utils'
 export async function Nav () {
   return (
     <nav className='p-4 border-b border-gray-200'>
-      <div className='flex flex-col justify-center sm:flex-row sm:items-center sm:justify-between gap-2'>
+      <div className='flex flex-col justify-center sm:flex-row sm:items-center sm:justify-around gap-2'>
         {/* Title */}
         <h1 className='text-2xl font-bold'>
           How they <i>really</i> voted
@@ -37,11 +37,10 @@ export async function Nav () {
             </NavigationMenuItem>
             <NavigationMenuItem>
               <Link
-                href='https://github.com/fstevens30/ccc-votes'
-                target='_blank'
+                href='/about'
                 className={cn(buttonVariants({ variant: 'ghost' }))}
               >
-                Source Code
+                About
               </Link>
             </NavigationMenuItem>
           </NavigationMenuList>

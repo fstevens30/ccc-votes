@@ -1,15 +1,7 @@
 'use client'
 import { useRouter } from 'next/navigation'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-  TableCaption
-} from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
 
 export type CouncillorRow = {
   id: number
@@ -43,48 +35,26 @@ export default function CouncillorsTable ({
   const router = useRouter()
 
   return (
-    <Table>
-      <TableCaption>
-        A list of all Christchurch City Councillors with their party and wards.
-      </TableCaption>
-      <TableHeader>
-        <TableRow className='hidden md:table-row-group'>
-          <TableHead>Name</TableHead>
-          <TableHead>Party</TableHead>
-          <TableHead>Ward</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {councillors.map(c => (
-          <TableRow
-            key={c.id}
-            className='block md:table-row mb-4 md:mb-0 border md:border-0 rounded md:rounded-none shadow-sm md:shadow-none'
-          >
-            <TableCell
-              onClick={() => router.push(`/councillors/${c.id}`)}
-              className='flex flex-col md:table-cell font-medium md:font-normal md:align-middle md:py-4 md:px-6 py-2 px-3 cursor-pointer'
-            >
-              {c.name}
-            </TableCell>
-            <TableCell className='flex flex-col md:table-cell md:align-middle md:py-4 md:px-6 py-2 px-3'>
-              <span className='md:hidden text-xs font-semibold text-gray-500 mb-1'>
-                Party:
-              </span>
-              {c.party ? (
-                <Badge className={getPartyColor(c.party)}>{c.party}</Badge>
-              ) : (
-                <Badge className={getPartyColor(null)}>Independent</Badge>
-              )}
-            </TableCell>
-            <TableCell className='flex flex-col md:table-cell md:align-middle md:py-4 md:px-6 py-2 px-3'>
-              <span className='md:hidden text-xs font-semibold text-gray-500 mb-1'>
-                Ward:
-              </span>
-              {c.ward ?? 'City-wide'}
-            </TableCell>
-          </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+    <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6'>
+      {councillors.map(c => (
+        <div
+          key={c.id}
+          onClick={() => router.push(`/councillors/${c.id}`)}
+          className='cursor-pointer p-4 border rounded shadow flex flex-col items-center text-center'
+        >
+          <Avatar className='w-16 h-16 mb-4'>
+            <AvatarImage src={`/councillors/${c.id}.jpg`} alt={c.name} />
+            <AvatarFallback>{c.name.charAt(0)}</AvatarFallback>
+          </Avatar>
+          <h2 className='text-lg font-bold mb-1'>{c.name}</h2>
+          <p className='text-sm text-gray-600 mb-2'>{c.ward ?? 'City-wide'}</p>
+          {c.party ? (
+            <Badge className={getPartyColor(c.party)}>{c.party}</Badge>
+          ) : (
+            <Badge className={getPartyColor(null)}>Independent</Badge>
+          )}
+        </div>
+      ))}
+    </div>
   )
 }

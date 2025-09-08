@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from 'next/font/google'
 import './globals.css'
 import { Analytics } from '@vercel/analytics/next'
 import { Nav } from '../components/Nav'
+import Footer from '@/components/Footer'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -16,7 +17,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: 'How they really voted.',
-  description: 'A site to show how votes were casted by Christchurch City Councillors.'
+  description:
+    'A site to show how votes were casted by Christchurch City Councillors.'
 }
 
 export default function RootLayout ({
@@ -32,6 +34,7 @@ export default function RootLayout ({
         <Nav />
         {children}
         <Analytics />
+        <Footer />
       </body>
     </html>
   )
